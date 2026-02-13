@@ -5,10 +5,11 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #f9e3e3;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Dancing Script', 'Arial', sans-serif;
     flex-direction: column;
+    overflow: hidden;
   }
-  
+
   .container {
     text-align: center;
     box-shadow: #5555563d 0px 8px 24px;
@@ -18,17 +19,29 @@ body {
     width: 60%;
     max-width: 1000px;
     height: auto;
+    animation: fadeInUp 0.8s ease-out;
   }
-  
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
   h1 {
     font-size: 2.5em;
     color: #d32f2f;
   }
-  
+
   .buttons {
     margin-top: 20px;
   }
-  
+
   .yes-button {
     font-size: 1.5em;
     padding: 10px 20px;
@@ -38,8 +51,15 @@ body {
     border: none;
     border-radius: 20px;
     cursor: pointer;
+    transition: all 0.3s ease;
   }
-  
+
+  .yes-button:hover {
+    background-color: #c71585;
+    transform: scale(1.08);
+    box-shadow: 0 4px 15px rgba(219, 112, 147, 0.5);
+  }
+
   .no-button {
     font-size: 1.5em;
     padding: 10px 20px;
@@ -52,21 +72,38 @@ body {
     position: relative;
   }
 
-.no-button:hover {
+  .no-button:hover {
     filter: drop-shadow(0 4px 8px rgba(255, 105, 180, 0.4));
-}
+  }
 
-.shy-message {
+  .shy-message {
     font-size: 1.2em;
     color: #555;
     margin-top: 15px;
-    opacity: .5;
-    font-size: 4em;
+    opacity: 0.5;
+    min-height: 1.5em;
   }
-  
+
   .gif_container img {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
     margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      width: 90%;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 1.8em;
+    }
+
+    .yes-button,
+    .no-button {
+      font-size: 1.2em;
+      padding: 8px 16px;
+    }
   }

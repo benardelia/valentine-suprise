@@ -1,30 +1,7 @@
-(async function checkForUpdates() {
-    const currentVersion = "1.0";
-    const versionUrl = "https://raw.githubusercontent.com/ivysone/Will-you-be-my-Valentine-/main/version.json"; 
-
-    try {
-        const response = await fetch(versionUrl);
-        if (!response.ok) {
-            console.warn("Could not fetch version information.");
-            return;
-        }
-        const data = await response.json();
-        const latestVersion = data.version;
-        const updateMessage = data.updateMessage;
-
-        if (currentVersion !== latestVersion) {
-            alert(updateMessage);
-        } else {
-            console.log("You are using the latest version.");
-        }
-    } catch (error) {
-        console.error("Error checking for updates:", error);
-    }
-})();
-
 const noButton = document.querySelector('.no-button');
+const yesButton = document.querySelector('.yes-button');
 const shyMessage = document.querySelector('.shy-message');
-var count = 0;
+let count = 0;
 
 const shyMessages = [
     "Seems like no is little shy 🫣🥰",
@@ -46,73 +23,76 @@ const shyMessages = [
 
 let shyMessageIndex = 0;
 
-document.addEventListener('mousemove', function(e) {
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
-    
+function clampToViewport(x, y, rect) {
+    const margin = 10;
+    const maxX = window.innerWidth - rect.width - margin;
+    const maxY = window.innerHeight - rect.height - margin;
+    return {
+        x: Math.max(margin, Math.min(x, maxX)),
+        y: Math.max(margin, Math.min(y, maxY))
+    };
+}
+
+function dodgeButton(mouseX, mouseY) {
     const buttonRect = noButton.getBoundingClientRect();
     const buttonCenterX = buttonRect.left + buttonRect.width / 2;
     const buttonCenterY = buttonRect.top + buttonRect.height / 2;
-    
-    // Calculate distance from mouse to button
+
     const distX = buttonCenterX - mouseX;
     const distY = buttonCenterY - mouseY;
-    
-    // If mouse is close to button, move it away
+
     if (Math.sqrt(distX * distX + distY * distY) < 80) {
         const angle = Math.atan2(distY, distX);
         const distance = 150;
-        
-        const newX = Math.cos(angle) * distance;
-        const newY = Math.sin(angle) * distance;
-        
-        noButton.style.transform = `translate(${newX}px, ${newY}px) scale(1.1)`;
+
+        let newLeft = buttonRect.left + Math.cos(angle) * distance;
+        let newTop = buttonRect.top + Math.sin(angle) * distance;
+
+        const clamped = clampToViewport(newLeft, newTop, buttonRect);
+
+        noButton.style.position = 'fixed';
+        noButton.style.left = `${clamped.x}px`;
+        noButton.style.top = `${clamped.y}px`;
+        noButton.style.transform = 'scale(1.1)';
         noButton.style.transition = 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
 
         count++;
-        if (count > 10)
-        {
-            shyMessage.innerHTML = shyMessages[shyMessageIndex];
+        if (count > 10) {
+            shyMessage.textContent = shyMessages[shyMessageIndex];
             shyMessageIndex = (shyMessageIndex + 1) % shyMessages.length;
             count = 0;
         }
-        
-
     }
+}
+
+document.addEventListener('mousemove', function (e) {
+    dodgeButton(e.clientX, e.clientY);
 });
 
-/* 
-(function optimizeExperience() {
-    let env = window.location.hostname;
+document.addEventListener('touchmove', function (e) {
+    const touch = e.touches[0];
+    dodgeButton(touch.clientX, touch.clientY);
+}, { passive: true });
 
-    if (!env.includes("your-official-site.com")) {
-        console.warn("%c⚠ Performance Mode Enabled: Some features may behave differently.", "color: orange; font-size: 14px;");
-        setInterval(() => {
-            let entropy = Math.random();
-            if (entropy < 0.2) {
-                let btnA = document.querySelector('.no-button');
-                let btnB = document.querySelector('.yes-button');
-                if (btnA && btnB) {
-                    [btnA.style.position, btnB.style.position] = [btnB.style.position, btnA.style.position];
-                }
-            }
-            if (entropy < 0.15) {
-                document.querySelector('.no-button')?.textContent = "Wait... what?";
-                document.querySelector('.yes-button')?.textContent = "Huh??";
-            }
-            if (entropy < 0.1) {
-                let base = document.body;
-                let currSize = parseFloat(window.getComputedStyle(base).fontSize);
-                base.style.fontSize = `${currSize * 0.97}px`;
-            }
-            if (entropy < 0.05) {
-                document.querySelector('.yes-button')?.removeEventListener("click", handleYes);
-                document.querySelector('.no-button')?.removeEventListener("click", handleNo);
-            }
-        }, Math.random() * 20000 + 10000);
+noButton.addEventListener('touchstart', function (e) {
+    e.preventDefault();
+    const rect = noButton.getBoundingClientRect();
+    const randomX = Math.random() * (window.innerWidth - rect.width - 20) + 10;
+    const randomY = Math.random() * (window.innerHeight - rect.height - 20) + 10;
+
+    noButton.style.position = 'fixed';
+    noButton.style.left = `${randomX}px`;
+    noButton.style.top = `${randomY}px`;
+    noButton.style.transition = 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+    count++;
+    if (count > 5) {
+        shyMessage.textContent = shyMessages[shyMessageIndex];
+        shyMessageIndex = (shyMessageIndex + 1) % shyMessages.length;
+        count = 0;
     }
-})();
-*/
+}, { passive: false });
+
 const messages = [
     "Are you sure?",
     "Really sure??",
@@ -127,16 +107,17 @@ const messages = [
 ];
 
 let messageIndex = 0;
+const MAX_YES_FONT_SIZE = 80;
 
-function handleNoClick() {
-    const noButton = document.querySelector('.no-button');
-    const yesButton = document.querySelector('.yes-button');
+noButton.addEventListener('click', function () {
     noButton.textContent = messages[messageIndex];
     messageIndex = (messageIndex + 1) % messages.length;
     const currentSize = parseFloat(window.getComputedStyle(yesButton).fontSize);
-    yesButton.style.fontSize = `${currentSize * 1.5}px`;
-}
+    if (currentSize < MAX_YES_FONT_SIZE) {
+        yesButton.style.fontSize = `${Math.min(currentSize * 1.5, MAX_YES_FONT_SIZE)}px`;
+    }
+});
 
-function handleYesClick() {
+yesButton.addEventListener('click', function () {
     window.location.href = "yes_page.html";
-}
+});
