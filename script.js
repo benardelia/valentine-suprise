@@ -21,6 +21,66 @@
         console.error("Error checking for updates:", error);
     }
 })();
+
+const noButton = document.querySelector('.no-button');
+const shyMessage = document.querySelector('.shy-message');
+var count = 0;
+
+const shyMessages = [
+    "Seems like no is little shy 🫣🥰",
+    "No button is blushing... 💕",
+    "Aww, someone's feeling shy! 😳",
+    "The no button needs space... 🥺",
+    "This button is camera shy! 📸",
+    "Oops, it ran away! 🏃‍♂️💨",
+    "So much shyness in one button! 😤❤️",
+    "It's playing hard to get... 😏",
+    "The no button is flustered! 👀💗",
+    "Caught you being shy! 🙈",
+    "This button has performance anxiety! 😅",
+    "Someone's got the butterflies! 🦋",
+    "The button said 'not now' 🤐",
+    "Shyness level: expert mode! 🌟",
+    "The no button is having trust issues 😂💔"
+];
+
+let shyMessageIndex = 0;
+
+document.addEventListener('mousemove', function(e) {
+    const mouseX = e.clientX;
+    const mouseY = e.clientY;
+    
+    const buttonRect = noButton.getBoundingClientRect();
+    const buttonCenterX = buttonRect.left + buttonRect.width / 2;
+    const buttonCenterY = buttonRect.top + buttonRect.height / 2;
+    
+    // Calculate distance from mouse to button
+    const distX = buttonCenterX - mouseX;
+    const distY = buttonCenterY - mouseY;
+    
+    // If mouse is close to button, move it away
+    if (Math.sqrt(distX * distX + distY * distY) < 80) {
+        const angle = Math.atan2(distY, distX);
+        const distance = 150;
+        
+        const newX = Math.cos(angle) * distance;
+        const newY = Math.sin(angle) * distance;
+        
+        noButton.style.transform = `translate(${newX}px, ${newY}px) scale(1.1)`;
+        noButton.style.transition = 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+        count++;
+        if (count > 10)
+        {
+            shyMessage.innerHTML = shyMessages[shyMessageIndex];
+            shyMessageIndex = (shyMessageIndex + 1) % shyMessages.length;
+            count = 0;
+        }
+        
+
+    }
+});
+
 /* 
 (function optimizeExperience() {
     let env = window.location.hostname;
