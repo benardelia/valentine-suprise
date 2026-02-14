@@ -19,6 +19,13 @@
         </div>
     </div>
     <script>
+        const recipientName = new URLSearchParams(window.location.search).get('name');
+        if (recipientName) {
+            const header = document.querySelector('.header_text');
+            header.textContent = `Knew you would say yes, ${recipientName}!`;
+            document.title = `Knew you would say yes, ${recipientName}!`;
+        }
+
         const heartsBg = document.querySelector('.hearts-bg');
         for (let i = 0; i < 20; i++) {
             const heart = document.createElement('span');

@@ -1,3 +1,14 @@
+const params = new URLSearchParams(window.location.search);
+const recipientName = params.get('name');
+
+const titleEl = document.getElementById('title');
+if (recipientName) {
+    titleEl.textContent = `Will you be my Valentine, ${recipientName}?`;
+    document.title = `Will You Be My Valentine, ${recipientName}?`;
+}
+
+
+
 const noButton = document.querySelector('.no-button');
 const yesButton = document.querySelector('.yes-button');
 const shyMessage = document.querySelector('.shy-message');
@@ -119,5 +130,8 @@ noButton.addEventListener('click', function () {
 });
 
 yesButton.addEventListener('click', function () {
-    window.location.href = "yes_page.html";
+    const url = recipientName
+        ? `yes_page.html?name=${encodeURIComponent(recipientName)}`
+        : 'yes_page.html';
+    window.location.href = url;
 });
